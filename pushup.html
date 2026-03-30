@@ -1,0 +1,604 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>伏地挺身訓練</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+            --panel-bg: #161b22;
+            --border-color: #30363d;
+            --accent-green: #2ea043;
+            --accent-blue: #1f6feb;
+            --accent-yellow: #e3b341;
+            --accent-red: #f85149;
+            --hover-bg: #21262d;
+        }
+
+        body {
+            font-family: "Segoe UI", "Microsoft JhengHei", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 頂部導覽列 */
+        header {
+            width: 100%;
+            background-color: var(--panel-bg);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+
+            header h1 {
+                margin: 0;
+                color: #fff;
+                font-size: 2rem;
+                letter-spacing: 2px;
+            }
+
+            header p {
+                margin: 5px 0 0 0;
+                color: #8b949e;
+                font-size: 1rem;
+            }
+
+        /* 主內容區 */
+        main {
+            width: 90%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding-bottom: 40px;
+        }
+
+        /* 控制面板 (選擇器) */
+        .control-panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .control-label {
+            font-weight: bold;
+            color: #fff;
+            width: 60px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+            .btn:hover {
+                background-color: var(--hover-bg);
+                border-color: #8b949e;
+            }
+
+            .btn.active[data-type] {
+                background-color: var(--accent-blue);
+                color: #fff;
+                border-color: var(--accent-blue);
+            }
+
+            .btn.active[data-level] {
+                background-color: var(--accent-green);
+                color: #fff;
+                border-color: var(--accent-green);
+            }
+
+        /* ================= 分段計時器卡片 ================= */
+        .timer-card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 計時器頂部狀態指示條 */
+        .timer-progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 6px;
+            width: 0%;
+            background-color: var(--accent-green);
+            transition: width 1s linear, background-color 0.3s;
+        }
+
+        /* 計時器設定區 */
+        .timer-settings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .setting-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+            .setting-item label {
+                font-size: 0.9rem;
+                color: #8b949e;
+            }
+
+            .setting-item input {
+                width: 60px;
+                padding: 5px;
+                text-align: center;
+                background-color: #0d1117;
+                border: 1px solid var(--border-color);
+                color: #fff;
+                border-radius: 6px;
+                font-size: 1.1rem;
+            }
+
+                .setting-item input:focus {
+                    outline: none;
+                    border-color: var(--accent-blue);
+                }
+
+        /* 預估總時間顯示 */
+        .total-time-display {
+            font-size: 1.1rem;
+            color: var(--accent-blue);
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding: 8px;
+            background-color: rgba(31, 111, 235, 0.1);
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        /* 顯示畫面 */
+        .phase-indicator {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+
+        .set-indicator {
+            font-size: 1.2rem;
+            color: #8b949e;
+            margin-bottom: 15px;
+        }
+
+        .timer-display {
+            font-size: 5rem;
+            font-weight: bold;
+            color: var(--accent-green);
+            margin-bottom: 25px;
+            font-family: "Courier New", Courier, monospace;
+            line-height: 1;
+        }
+
+        /* 控制按鈕 */
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .timer-btn {
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 10px 24px;
+        }
+
+            .timer-btn.start {
+                background-color: var(--accent-green);
+                color: #fff;
+                border-color: var(--accent-green);
+            }
+
+            .timer-btn.pause {
+                background-color: transparent;
+                color: var(--accent-yellow);
+                border-color: var(--accent-yellow);
+            }
+
+            .timer-btn.reset {
+                background-color: transparent;
+                color: var(--accent-red);
+                border-color: var(--accent-red);
+            }
+
+        /* ================= 動作說明卡片 ================= */
+        .instruction-card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .instruction-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin: 0 0 15px 0;
+        }
+
+        .instruction-content {
+            font-size: 1.05rem;
+            color: #8b949e;
+            line-height: 1.6;
+        }
+
+            .instruction-content ul {
+                padding-left: 20px;
+            }
+
+        .warning-text {
+            color: #e3b341;
+            font-weight: bold;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(227, 179, 65, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-yellow);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>💪 伏地挺身訓練</h1>
+        <p>漸進式阻力與肌力控制</p>
+    </header>
+
+    <main>
+        <div class="control-panel">
+            <div class="control-group">
+                <div class="control-label">姿勢</div>
+                <div class="btn-group" id="type-buttons">
+                    <button class="btn active" data-type="wall">靠牆</button>
+                    <button class="btn" data-type="kneeling">跪姿</button>
+                    <button class="btn" data-type="standard">標準</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label">強度</div>
+                <div class="btn-group" id="level-buttons">
+                    <button class="btn active" data-level="beginner">初級</button>
+                    <button class="btn" data-level="intermediate">中級</button>
+                    <button class="btn" data-level="advanced">高級</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="timer-card">
+            <div class="timer-progress-bar" id="progress-bar"></div>
+
+            <div class="timer-settings">
+                <div class="setting-item">
+                    <label>暖身 (秒)</label>
+                    <input type="number" id="input-warmup" value="60" min="0">
+                </div>
+                <div class="setting-item">
+                    <label>訓練 (秒)</label>
+                    <input type="number" id="input-work" value="45" min="5">
+                </div>
+                <div class="setting-item">
+                    <label>間隔 (秒)</label>
+                    <input type="number" id="input-rest" value="90" min="0">
+                </div>
+                <div class="setting-item">
+                    <label>組數</label>
+                    <input type="number" id="input-sets" value="3" min="1">
+                </div>
+                <div class="setting-item">
+                    <label>緩和 (秒)</label>
+                    <input type="number" id="input-cooldown" value="60" min="0">
+                </div>
+            </div>
+
+            <div class="total-time-display" id="total-time-calc">⏱️ 預估總時間: 06 分 45 秒</div>
+
+            <div class="phase-indicator" id="phase-display">準備開始</div>
+            <div class="set-indicator" id="set-display">組數: 0 / 0</div>
+            <div class="timer-display" id="time-display">00:00</div>
+
+            <div class="timer-controls">
+                <button class="btn timer-btn start" id="btn-start">▶ 開始</button>
+                <button class="btn timer-btn pause" id="btn-pause">⏸ 暫停</button>
+                <button class="btn timer-btn reset" id="btn-reset">🔄 重設</button>
+            </div>
+        </div>
+
+        <div class="instruction-card">
+            <h2 class="instruction-title" id="display-title">📋 動作說明載入中...</h2>
+            <div class="instruction-content" id="display-content"></div>
+        </div>
+
+        <a href="index.html" style="color: var(--accent-blue); text-decoration: none; text-align: center; margin-top: 10px; margin-bottom: 20px;">← 返回儀表板</a>
+    </main>
+
+    <script>
+        /* ================= 動作說明的資料庫 ================= */
+        const trainingData = {
+            wall: {
+                beginner: {
+                    title: "靠牆伏地挺身 - 初級 (適應期)",
+                    content: "這對身體負荷極低，主要用於練習肌肉啟動與呼吸控制。<br><ul><li><b>站位：</b>雙腳距離牆壁約 <strong>30 公分</strong>。</li><li><b>手部：</b>雙手平貼牆面，與肩同寬，高度約在乳頭連線。</li><li><b>動作：</b>下壓時手肘向斜下 45 度微彎，推起時背部挺直。</li><li><b>節奏：</b>下壓 2 秒，推起 2 秒。</li></ul>",
+                    warning: "⚠️ 呼吸原則：下壓時吸氣，推離牆壁時大聲吐氣，絕對不可憋氣。"
+                },
+                intermediate: {
+                    title: "靠牆伏地挺身 - 中級 (強化期)",
+                    content: "增加傾斜角度，讓胸大肌承受更多的自身重量。<br><ul><li><b>站位：</b>雙腳距離牆壁約 <strong>60 公分</strong>。</li><li><b>姿勢：</b>核心收緊，確保頭、背、臀、腿維持一直線。</li><li><b>動作：</b>專注於肩胛骨的穩定，感受胸肌夾緊。</li></ul>",
+                    warning: "⚠️ 注意心率：若做完一組感到微喘是正常的，但不可有胸悶感。確保間隔休息充足。"
+                },
+                advanced: {
+                    title: "靠牆伏地挺身 - 高級 (進階控制)",
+                    content: "距離牆壁最遠，或透過減慢動作速度來增加肌肉張力時間。<br><ul><li><b>站位：</b>雙腳距離牆壁 <strong>90 公分</strong>以上。</li><li><b>離心訓練：</b>嘗試<strong>慢速下壓 (4 秒)</strong>，然後正常推起 (2 秒)。</li></ul>",
+                    warning: "⚠️ 放慢動作時極易不自覺憋氣，請務必保持全程呼吸順暢。"
+                }
+            },
+            kneeling: {
+                beginner: { title: "跪姿伏地挺身 - 初級", content: "進入地面訓練的第一步。<br><ul><li><b>姿勢：</b>雙膝著地，雙手撐地。膝蓋靠近雙手減少負重。</li><li><b>動作：</b>下壓至胸部接近地面，再平穩推起。</li></ul>", warning: "⚠️ 若覺得壓力過大，請隨時退回靠牆訓練。" },
+                intermediate: { title: "跪姿伏地挺身 - 中級", content: "標準半程伏地挺身。<br><ul><li><b>姿勢：</b>肩膀、髖部、膝蓋呈一直線。避免塌腰。</li><li><b>動作：</b>下壓時手肘與身體呈約 45 度角。</li></ul>", warning: "⚠️ 推起時吐氣，不要硬撐導致動作變形。" },
+                advanced: { title: "跪姿伏地挺身 - 高級", content: "接近標準強度。<br><ul><li><b>深度：</b>下壓直到胸部輕觸地面，稍微停頓 1 秒再推起。</li></ul>", warning: "⚠️ 保持動作全程的控制力，切勿利用慣性彈起。" }
+            },
+            standard: {
+                beginner: { title: "標準伏地挺身 - 初級", content: "完整的自體重量訓練。<br><ul><li><b>姿勢：</b>腳尖著地，頭至腳跟呈直線。</li><li><b>建議：</b>可先練習「只做下降段(離心)」，再用膝蓋輔助撐起。</li></ul>", warning: "⚠️ 需確保心血管狀況穩定，不可在憋氣狀態下勉強推起。" },
+                intermediate: { title: "標準伏地挺身 - 中級", content: "流暢完成標準動作。<br><ul><li><b>目標：</b>穩定完成 10-15 下，姿勢不變形。</li></ul>", warning: "⚠️ 若最後幾下出現聳肩或塌腰，代表已達肌肉疲勞點，請停止。" },
+                advanced: { title: "標準伏地挺身 - 高級", content: "透過改變支撐方式增加難度。<br><ul><li><b>變化型：</b>窄距或雙腳墊高。加入停頓點。</li></ul>", warning: "⚠️ 高強度訓練容易引起血壓波動，嚴格控制呼吸。" }
+            }
+        };
+
+        /* 面板切換邏輯 */
+        let currentType = 'wall';
+        let currentLevel = 'beginner';
+
+        document.querySelectorAll('#type-buttons .btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('#type-buttons .btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentType = e.target.getAttribute('data-type');
+                updateInstruction();
+            });
+        });
+
+        document.querySelectorAll('#level-buttons .btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('#level-buttons .btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentLevel = e.target.getAttribute('data-level');
+                updateInstruction();
+            });
+        });
+
+        function updateInstruction() {
+            const data = trainingData[currentType][currentLevel];
+            document.getElementById('display-title').innerHTML = `📋 ${data.title}`;
+            document.getElementById('display-content').innerHTML = `${data.content}<div class="warning-text">${data.warning}</div>`;
+        }
+        updateInstruction();
+
+        /* ================= 階段式計時器邏輯 ================= */
+        let sequence = [];
+        let currentIndex = 0;
+        let timeLeft = 0;
+        let timerInterval;
+        let isRunning = false;
+
+        const phaseDisplay = document.getElementById('phase-display');
+        const setDisplay = document.getElementById('set-display');
+        const timeDisplay = document.getElementById('time-display');
+        const progressBar = document.getElementById('progress-bar');
+        const totalTimeCalcDisplay = document.getElementById('total-time-calc');
+
+        // 取得輸入值
+        function getSettings() {
+            return {
+                warmup: parseInt(document.getElementById('input-warmup').value) || 0,
+                work: parseInt(document.getElementById('input-work').value) || 0,
+                rest: parseInt(document.getElementById('input-rest').value) || 0,
+                sets: parseInt(document.getElementById('input-sets').value) || 1,
+                cooldown: parseInt(document.getElementById('input-cooldown').value) || 0
+            };
+        }
+
+        // 計算並更新預估總時間
+        function updateTotalTimeCalculation() {
+            const config = getSettings();
+            let totalSeconds = 0;
+
+            totalSeconds += config.warmup;
+            if (config.sets > 0) {
+                totalSeconds += (config.work * config.sets);
+                if (config.sets > 1) {
+                    totalSeconds += (config.rest * (config.sets - 1));
+                }
+            }
+            totalSeconds += config.cooldown;
+
+            const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const s = (totalSeconds % 60).toString().padStart(2, '0');
+
+            totalTimeCalcDisplay.textContent = `⏱️ 預估總時間: ${m} 分 ${s} 秒`;
+        }
+
+        // 建立訓練序列
+        function buildSequence() {
+            const config = getSettings();
+            sequence = [];
+
+            if (config.warmup > 0) sequence.push({ name: '暖身', time: config.warmup, color: 'var(--accent-yellow)', set: 0, totalSets: config.sets });
+
+            for (let i = 1; i <= config.sets; i++) {
+                if (config.work > 0) sequence.push({ name: '訓練', time: config.work, color: 'var(--accent-red)', set: i, totalSets: config.sets });
+                if (i < config.sets && config.rest > 0) {
+                    sequence.push({ name: '間隔休息', time: config.rest, color: 'var(--accent-blue)', set: i, totalSets: config.sets });
+                }
+            }
+
+            if (config.cooldown > 0) sequence.push({ name: '緩和', time: config.cooldown, color: 'var(--accent-green)', set: 0, totalSets: config.sets });
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function playBeep(isEnd = false) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            osc.type = isEnd ? 'square' : 'sine';
+            osc.frequency.setValueAtTime(isEnd ? 400 : 800, ctx.currentTime);
+            osc.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + (isEnd ? 1 : 0.3));
+        }
+
+        function updateUI() {
+            if (sequence.length === 0 || currentIndex >= sequence.length) return;
+
+            const currentPhase = sequence[currentIndex];
+            phaseDisplay.textContent = currentPhase.name;
+            phaseDisplay.style.color = currentPhase.color;
+            timeDisplay.style.color = currentPhase.color;
+            progressBar.style.backgroundColor = currentPhase.color;
+
+            if (currentPhase.set > 0) {
+                setDisplay.textContent = `組數: ${currentPhase.set} / ${currentPhase.totalSets}`;
+            } else {
+                setDisplay.textContent = `組數: -- / ${currentPhase.totalSets}`;
+            }
+
+            timeDisplay.textContent = formatTime(timeLeft);
+
+            // 計算進度條
+            const progressPercent = ((currentPhase.time - timeLeft) / currentPhase.time) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+        }
+
+        function nextPhase() {
+            currentIndex++;
+            if (currentIndex < sequence.length) {
+                timeLeft = sequence[currentIndex].time;
+                playBeep(); // 換階段的提示音
+                updateUI();
+            } else {
+                // 訓練結束
+                clearInterval(timerInterval);
+                isRunning = false;
+                phaseDisplay.textContent = "訓練完成！";
+                phaseDisplay.style.color = "var(--accent-green)";
+                timeDisplay.textContent = "00:00";
+                progressBar.style.width = "100%";
+                playBeep(true); // 結束長音
+            }
+        }
+
+        function startTimer() {
+            if (sequence.length === 0) {
+                buildSequence();
+                if (sequence.length === 0) return;
+                currentIndex = 0;
+                timeLeft = sequence[0].time;
+                updateUI();
+            }
+
+            if (!isRunning && currentIndex < sequence.length) {
+                isRunning = true;
+
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateUI();
+
+                    if (timeLeft <= 0) {
+                        nextPhase();
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            if (isRunning) {
+                isRunning = false;
+                clearInterval(timerInterval);
+            }
+        }
+
+        function resetTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            updateTotalTimeCalculation(); // 更新預估總時間
+            buildSequence();
+            currentIndex = 0;
+            if (sequence.length > 0) {
+                timeLeft = sequence[0].time;
+                updateUI();
+                progressBar.style.width = "0%";
+            } else {
+                phaseDisplay.textContent = "準備開始";
+                timeDisplay.textContent = "00:00";
+                setDisplay.textContent = "組數: 0 / 0";
+                progressBar.style.width = "0%";
+            }
+        }
+
+        // 綁定按鈕
+        document.getElementById('btn-start').addEventListener('click', startTimer);
+        document.getElementById('btn-pause').addEventListener('click', pauseTimer);
+        document.getElementById('btn-reset').addEventListener('click', resetTimer);
+
+        // 輸入框改變時重設計時器並更新總時間
+        document.querySelectorAll('.setting-item input').forEach(input => {
+            input.addEventListener('input', resetTimer); // 使用 input 事件即時反應
+        });
+
+        // 初始載入
+        resetTimer();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人訓練儀表板</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+            --panel-bg: #161b22;
+            --border-color: #30363d;
+            --accent-green: #2ea043;
+            --accent-blue: #1f6feb;
+            --accent-yellow: #e3b341;
+            --hover-bg: #21262d;
+        }
+
+        body {
+            font-family: "Segoe UI", "Microsoft JhengHei", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 頂部導覽列 */
+        header {
+            width: 100%;
+            background-color: var(--panel-bg);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            margin-bottom: 40px;
+        }
+
+            header h1 {
+                margin: 0;
+                color: #fff;
+                font-size: 2rem;
+                letter-spacing: 2px;
+            }
+
+            header p {
+                margin: 5px 0 0 0;
+                color: #8b949e;
+                font-size: 1rem;
+            }
+
+        /* 主內容區 - 網格排版 */
+        main {
+            width: 90%;
+            max-width: 1000px;
+            display: grid;
+            /* 自動適應螢幕寬度：最窄 280px，寬度夠就並排 */
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding-bottom: 40px;
+        }
+
+        /* 方塊連結 (卡片) 樣式 */
+        .card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            text-decoration: none; /* 移除超連結底線 */
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            /* 懸停 (Hover) 動畫效果 */
+            .card:hover {
+                transform: translateY(-5px); /* 往上浮起 */
+                border-color: var(--accent-green);
+                box-shadow: 0 8px 24px rgba(46, 160, 67, 0.15);
+                background-color: var(--hover-bg);
+            }
+
+        /* 卡片內的圖示與文字 */
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin: 0 0 10px 0;
+            font-weight: bold;
+        }
+
+        .card-desc {
+            font-size: 1rem;
+            color: #8b949e;
+            line-height: 1.5;
+            margin: 0;
+            flex-grow: 1; /* 讓文字自動撐開空間 */
+        }
+
+        /* 卡片底部的裝飾線條 */
+        .card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: transparent;
+            transition: background-color 0.3s ease;
+        }
+
+        /* 針對不同卡片設定不同顏色的底部裝飾線 */
+        .card.squat:hover::after {
+            background-color: var(--accent-green);
+        }
+
+        .card.plank:hover::after {
+            background-color: var(--accent-blue);
+        }
+
+        .card.hiit:hover::after {
+            background-color: var(--accent-yellow);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🏋️ 個人訓練儀表板</h1>
+        <p>選擇您今天的訓練項目</p>
+    </header>
+
+    <main>
+        <a href="squat.html" class="card squat">
+            <div class="card-icon">🦵</div>
+            <h2 class="card-title">深蹲計時器</h2>
+            <p class="card-desc">結合 3-2-1 節奏與呼吸控制，專為維持肌耐力與心肺穩定設計的 10 分鐘訓練。</p>
+        </a>
+
+        <a href="pushup.html" class="card hiit">
+            <div class="card-icon">💪</div>
+            <h2 class="card-title">伏地挺身訓練</h2>
+            <p class="card-desc">漸進式阻力與肌力控制，包含靠牆、跪姿與標準強度的切換說明與注意事項。</p>
+        </a>
+
+        <a href="#" class="card plank">
+            <div class="card-icon">🛡️</div>
+            <h2 class="card-title">棒式核心挑戰</h2>
+            <p class="card-desc">漸進式核心穩定訓練，強化腹部與下背部肌群。(建置中)</p>
+        </a>
+
+        <a href="#" class="card hiit">
+            <div class="card-icon">⏱️</div>
+            <h2 class="card-title">自訂間歇訓練</h2>
+            <p class="card-desc">自由設定運動與休息秒數，適用於各種徒手或輕負重訓練。(建置中)</p>
+        </a>
+    </main>
+
+</body>
+</html>
